@@ -1,4 +1,5 @@
 #include <iostream>
+
 using namespace std;
 
 // Ham nhap the tich binh X, binh Y va luong nuoc can dong
