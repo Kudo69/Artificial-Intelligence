@@ -1,6 +1,7 @@
 #include<iostream>
 #include<stdio.h>
 #include<stdlib.h>
+#include<stack>
 using namespace std;
 
 #define tankcapacity_X 9 //Suc chua binh X
@@ -134,6 +135,84 @@ const char* action[] = {"First State","pour Water Full x","pour Water Full Y",
 //Khai bao cau truc trang thai
 //Cài đặt các hàm hành động trạng thái
 //Cài đặt hàm call operator
+
+//Khai bao cau truc nut (dinh) de dung cay tim kiem
+typedef struct Node
+{
+	State state;
+	struct Node* Parent;
+	int no_function;
+} Node;
+
+//Khai bao cau truc Stack de luu trang thai duyet
+typedef struct
+{
+	Node* Elements[Maxlength] ;
+	int Top_idx;
+}Stack;
+
+//Dua 1 phan tu len ngan xep
+void push(Node* x, Stack *stack)
+{
+	if (full_Stack(*stack))
+		printf ("Error!Stack is full");
+	else
+	{
+		stack->Top_idx -=1;
+		stack->Elements[stack->Top_idx]=x;
+
+	}
+}
+
+//Khoi tao ngan xep rong
+void makeNull_Stack(Stack *stack)
+{
+	stack->Top_idx = Maxlength;
+}
+
+//Kiem tra xem ngan xep co rong hay khong
+int empty_Stack(Stack stack)
+{
+	return stack.Top_idx == Maxlength;
+}
+
+/*Kiem tra ngan xep co day khong*/
+int full_Stack(Stack stack) 
+{
+	return stack.Top_idx == 0;
+}
+
+//Tra ve phan tu tren dinh ngan xep
+Node* top (Stack stack) 
+{
+	if (!empty_Stack(stack))
+		return stack.Elements[stack.Top_idx];
+	return NULL;
+}
+
+//Xoa phan tu tai dinh ngan xep
+void pop (Stack *stack)
+{
+	if (!empty_Stack(*stack))
+		stack->Top_idx+=1;
+	else 
+		printf("Error! Stack is empty");
+
+}
+
+
+//Tim trang thai trong Stack Open/Close
+// int find_State(State state, Stack openStack) 
+// {
+// 	while(!empty_Stack(openStack))
+// 	{
+// 		if(compareStates(top(openStack)->state,state))
+// 			return 1;
+// 		pop (&openStack) ;
+// 	}
+// 	return 0;
+// }
+
 
 int main()
 {
