@@ -151,6 +151,12 @@ typedef struct
 	int Top_idx;
 }Stack;
 
+/*Kiem tra ngan xep co day khong*/
+int full_Stack(Stack stack) 
+{
+	return stack.Top_idx == 0;
+} 
+
 //Dua 1 phan tu len ngan xep
 void push(Node* x, Stack *stack)
 {
@@ -176,12 +182,6 @@ int empty_Stack(Stack stack)
 	return stack.Top_idx == Maxlength;
 }
 
-/*Kiem tra ngan xep co day khong*/
-int full_Stack(Stack stack) 
-{
-	return stack.Top_idx == 0;
-}
-
 //Tra ve phan tu tren dinh ngan xep
 Node* top (Stack stack) 
 {
@@ -200,38 +200,118 @@ void pop (Stack *stack)
 
 }
 
+bool compareState(Stack *stack, State *state)
+{
+	if( stack == state) 
+		return true;
+	return false;
+	
+}
 
 //Tim trang thai trong Stack Open/Close
-// int find_State(State state, Stack openStack) 
-// {
-// 	while(!empty_Stack(openStack))
-// 	{
-// 		if(compareStates(top(openStack)->state,state))
-// 			return 1;
-// 		pop (&openStack) ;
-// 	}
-// 	return 0;
-// }
+int find_State(State state, Stack openStack) 
+{
+	while(!empty_Stack(openStack))
+	{
+		if(compareState(top(openStack)->state,state))
+			return 1;
+		pop (&openStack) ;
+	}
+	return 0;
+}
 
+//Thuat toan duyet theo chieu sau
+Node* DFS_Algorithm(State state)
+{
+	//Khai bao hai ngan xep Open va Close
+	Stack Open_DFS;
+	Stack Close_DFS;
+	makeNull_Stack(&Open_DFS) ;
+	makeNull_Stack(&Close_DFS) ;
+	//Tao nut trang thai chả
+	Node* root = (Node*)malloc(sizeof (Node)) ;
+	root->state = state;
+	root->Parent = NULL;
+	root->no_function;
+	push(root, &Open_DFS);
+
+	while(!empty_Stack(Open_DFS))
+	{
+		//Lay mot dinh trong ngan xep
+		Node* node = top(Open_DFS) ;
+		pop(&Open_DFS) ;
+		push(node, &Close_DFS);
+		//Kiem tra xem dinh lay ra co phai trang thai muc tieu?
+		if(goalcheck (node->state))
+			return node;
+		int opt;
+		//Goi cac phep toan tren trang thai
+		for(opt=1; opt<=6; opt++)
+		{
+			State newstate;
+			makeNullState (&newstate) ;
+			if(call_operator(node->state, &newstate, opt))
+			{
+				//Neu trang thai moi sinh ra da ton tai thi bo qua
+				if(find_State(newstate, Close_DFS) || find_State(newstate, Open_DFS))
+					continue;
+
+				//Neu trang thai moi chua ton tai thì them vao ngan xep
+				Node* newNode = (Node*)malloc(sizeof(Node));
+				newNode->state = newstate;
+				newNode->Parent = node;
+				newNode->no_function = opt;
+				push(newNode, &Open_DFS) ;
+			}
+		}
+	}
+	return NULL;
+}
+
+//In ket qua chuyen nuoc de dat den trang thai muc tieu
+void print_WaysToGetGoal (Node* node) 
+{
+	Stack stackPrint;
+	makeNull_Stack(&stackPrint) ;
+	//Duyet nguoc ve nut parent de
+	while(node->Parent != NULL) 
+	{
+		push(node, &stackPrint);
+		node = node->Parent;
+	}
+	push (node, &stackPrint); 
+	//1n ra thu tu hanh dong chuyen nuoc
+	int no_action = 0;
+	while(!empty_Stack(stackPrint))
+	{
+		printf ("\nAction %d: %s", no_action, action[top(stackPrint)->no_function]);
+		print_State (top(stackPrint)->state) ;
+		pop (&stackPrint) ;
+		no_action++;
+	}
+}
 
 int main()
 {
-	State cur_state = {5, 4}, result;
-	printf ("Trang thai bat dau");
-	print_State(cur_state);
-	int opt;
-	for(opt=1; opt<=6; opt++)
-	{
-		int thuchien = call_operator(cur_state, &result, opt);
-		if(thuchien == 1)
-		{
-			//thuc hien hanh dong thanh cong
-			printf ("\nHanh dong %s thanh cong", action[opt]);
-			print_State (result);
-		}
-		else
-			printf("\nHanh dong %s KHONG thanh cong", action[opt]);
-	}
+	State cur_state = {0, 0};
+	Node* p = DFS_Algorithm(cur_state);
+	print_WaysToGetGoal(p);
+	
+	// printf ("Trang thai bat dau");
+	// print_State(cur_state);
+	// int opt;
+	// for(opt=1; opt<=6; opt++)
+	// {
+	// 	int thuchien = call_operator(cur_state, &result, opt);
+	// 	if(thuchien == 1)
+	// 	{
+	// 		//thuc hien hanh dong thanh cong
+	// 		printf ("\nHanh dong %s thanh cong", action[opt]);
+	// 		print_State (result);
+	// 	}
+	// 	else
+	// 		printf("\nHanh dong %s KHONG thanh cong", action[opt]);
+	// }
 	return 0;
 }
 
