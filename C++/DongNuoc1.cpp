@@ -4,10 +4,10 @@
 #include<stack>
 using namespace std;
 
-#define tankcapacity_X 9 //Suc chua binh X
-#define tankcapacity_Y 4 //Suc chua binh Y
+#define tankcapacity_X 4 //Suc chua binh X
+#define tankcapacity_Y 3 //Suc chua binh Y
 #define empty 0
-#define goal 6 //Muc tieu luong nuoc can dong duoc
+#define goal 2 //Muc tieu luong nuoc can dong duoc
 #define Maxlength 100 //§Su dung cai dat Ngan xep (Stack)
 
 //Khai bao cau truc trang thai
@@ -200,12 +200,11 @@ void pop (Stack *stack)
 
 }
 
-bool compareState(Stack *stack, State *state)
+bool compareStates(State state1, State state2)
 {
-	if( stack == state) 
+	if (state1.x == state2.x && state1.y == state2.y) 
 		return true;
 	return false;
-	
 }
 
 //Tim trang thai trong Stack Open/Close
@@ -213,7 +212,7 @@ int find_State(State state, Stack openStack)
 {
 	while(!empty_Stack(openStack))
 	{
-		if(compareState(top(openStack)->state,state))
+		if(compareStates(top(openStack)->state,state))
 			return 1;
 		pop (&openStack) ;
 	}
@@ -228,7 +227,7 @@ Node* DFS_Algorithm(State state)
 	Stack Close_DFS;
 	makeNull_Stack(&Open_DFS) ;
 	makeNull_Stack(&Close_DFS) ;
-	//Tao nut trang thai chả
+	//Tao nut trang thai cha
 	Node* root = (Node*)malloc(sizeof (Node)) ;
 	root->state = state;
 	root->Parent = NULL;
@@ -238,8 +237,10 @@ Node* DFS_Algorithm(State state)
 	while(!empty_Stack(Open_DFS))
 	{
 		//Lay mot dinh trong ngan xep
-		Node* node = top(Open_DFS) ;
-		pop(&Open_DFS) ;
+		Node* node = top(Open_DFS);
+		
+		pop(&Open_DFS);
+		
 		push(node, &Close_DFS);
 		//Kiem tra xem dinh lay ra co phai trang thai muc tieu?
 		if(goalcheck (node->state))
