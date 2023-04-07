@@ -120,6 +120,7 @@ int main()
 {	
 	xuly(); 
 	printf("\n So buoc lap la : %d\n",g); 
+	return 0; 
 } 
 
 
